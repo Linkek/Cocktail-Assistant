@@ -44,7 +44,9 @@ export const recipeListStyles = `
 
   .recipes-list {
     font-size: 1.375rem;
-    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
   }
 
   /* Responsive design */
