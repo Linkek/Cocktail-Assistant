@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+dist/
+
+# build files
+*.log
+*.tsbuildinfo
+
+# system files
+.DS_Store
+Thumbs.db
+
+# IDE stuff
+.vscode/
+.idea/

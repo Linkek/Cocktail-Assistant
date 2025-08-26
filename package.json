@@ -1,0 +1,21 @@
+{
+  "name": "cocktail-assistant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "esbuild src/main.tsx --bundle --outdir=dist --watch --servedir=."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "haunted": "^6.1.0",
+    "lit-html": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
+  }
+}

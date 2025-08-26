@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cocktail Assistant</title>
+    <style>
+      /* Global styles that need to apply to the document */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        color: #2d3748;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      /* Custom scrollbar for webkit browsers */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      }
+
+      /* Loading animation for images */
+      img {
+        transition: opacity 0.3s ease;
+      }
+
+      img:not([src]) {
+        opacity: 0;
+      }
+
+      /* Focus styles for better accessibility */
+      [tabindex]:focus {
+        outline: 2px solid #667eea;
+        outline-offset: 2px;
+      }
+
+      /* Screen reader only content */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* High contrast mode support */
+      @media (prefers-contrast: high) {
+        button:focus,
+        input:focus,
+        [tabindex]:focus {
+          outline: 3px solid;
+          outline-offset: 2px;
+        }
+      }
+
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      .app-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: calc(100vh - 4rem);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin: 0 0 0.5rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        color: #64748b;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="header">
+        <h1>🍹 Cocktail Assistant</h1>
+        <p>Discover cocktails and build your shopping list</p>
+      </div>
+      <cocktail-app></cocktail-app>
+    </div>
+    <script type="module" src="./dist/main.js"></script>
+  </body>
+</html>
