@@ -5,7 +5,7 @@
 
 import { component, useEffect, useState } from 'haunted';
 import { html } from 'lit-html';
-import { ToastMessage, ToastType } from '../../types/enums';
+import { ToastMessage, ToastType } from '../../types/index.js';
 import { toastStyles } from './Toast.styles';
 
 interface ToastProps {
@@ -87,13 +87,14 @@ function Toast({ message, onClose }: ToastProps) {
       <span class="toast-icon">${getIcon()}</span>
       <span class="toast-message">${message.message}</span>
       ${message.type !== ToastType.SEARCHING ? html`
-        <button 
-          class="close-button"
-          @click=${handleClose}
-          aria-label="Close notification"
-        >
-          ×
-        </button>
+        <app-button
+          .variant=${'danger'}
+          .size=${'small'}
+          .label=${'✕'}
+          .onClick=${handleClose}
+          .ariaLabel=${`Close notification`}
+          .title=${'Close notification'}
+        ></app-button>
       ` : ''}
     </div>
   `;

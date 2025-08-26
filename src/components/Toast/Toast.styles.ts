@@ -6,7 +6,7 @@
 export const toastStyles = `
   .Toast {
     position: fixed;
-    top: 1.25rem;
+    bottom: 1.25rem;
     right: 1.25rem;
     padding: 1rem 1.5rem;
     border-radius: 12px;
@@ -21,7 +21,6 @@ export const toastStyles = `
     align-items: center;
     gap: 0.75rem;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .Toast.show {
@@ -61,36 +60,6 @@ export const toastStyles = `
     font-weight: 500;
   }
 
-  .close-button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 1.5rem;
-    padding: 0.25rem;
-    opacity: 0.8;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    border-radius: 4px;
-    line-height: 1;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .close-button:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-  }
-
-  .close-button:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
-  }
-
   @keyframes bounce {
     0%, 20%, 53%, 80%, 100% {
       transform: translate3d(0, 0, 0);
@@ -108,15 +77,14 @@ export const toastStyles = `
 
   @media (max-width: 768px) {
     .Toast {
-      top: 1rem;
+      bottom: 1rem;
       right: 1rem;
-      left: 1rem;
       max-width: none;
-      transform: translateY(-100%);
+      transform: translateX(100%);
     }
     
     .Toast.show {
-      transform: translateY(0);
+      transform: translateX(0);
     }
     
     .toast-message {
@@ -136,12 +104,6 @@ export const toastStyles = `
     
     .toast-message {
       font-size: 0.8rem;
-    }
-    
-    .close-button {
-      font-size: 1.25rem;
-      width: 20px;
-      height: 20px;
     }
   }
 `;

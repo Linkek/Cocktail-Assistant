@@ -5,11 +5,11 @@
 
 import { component } from 'haunted';
 import { html } from 'lit-html';
-import { Ingredient } from '../../types/enums';
+import { ShoppingItem } from '../../types/index.js';
 import { shoppingListStyles } from './ShoppingList.styles';
 
 interface ShoppingListProps {
-  ingredients: Ingredient[];
+  ingredients: ShoppingItem[];
   onRemoveIngredient: (ingredientName: string) => void;
   onPrint: () => void;
 }
@@ -40,27 +40,28 @@ function ShoppingList({ ingredients, onRemoveIngredient, onPrint }: ShoppingList
                 ${ingredients.map(ingredient => html`
                   <li class="ingredient-item" role="listitem">
                     <span class="ingredient-text">
-                      ${ingredient.name}
-                      ${ingredient.measure ? html`<span class="ingredient-measure">${ingredient.measure}</span>` : ''}
+                      ${ingredient.quantity}x ${ingredient.name}
                     </span>
-                    <button 
-                      class="remove-button"
-                      @click=${() => handleRemoveClick(ingredient.name)}
-                      aria-label=${`Remove ${ingredient.name} from shopping list`}
-                      title="Remove ingredient"
-                    >
-                      ×
-                    </button>
+                    <app-button
+                      .variant=${'danger'}
+                      .size=${'small'}
+                      .label=${'✕'}
+                      .onClick=${() => handleRemoveClick(ingredient.name)}
+                      .ariaLabel=${`Remove ${ingredient.name} from shopping list`}
+                      .title=${'Remove ingredient'}
+                    ></app-button>
                   </li>
                 `)}
               </ul>
-              <button 
-                class="print-button"
-                @click=${handlePrintClick}
-                aria-label="Print shopping list"
-              >
-                Print Shopping List
-              </button>
+              <app-button
+                .variant=${'success'}
+                .size=${'medium'}
+                .fullWidth=${true}
+                .icon=${'🖨️'}
+                .label=${'Print Shopping List'}
+                .onClick=${handlePrintClick}
+                .ariaLabel=${'Print shopping list'}
+              ></app-button>
             `
         }
       </div>

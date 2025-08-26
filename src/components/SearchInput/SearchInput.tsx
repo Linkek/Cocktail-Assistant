@@ -42,14 +42,16 @@ function SearchInput({ onSearch, loading }: SearchInputProps) {
           .disabled=${loading}
           aria-label="Search for cocktails"
         />
-        <button
-          type="submit"
-          class="search-button"
+        <app-button
+          .variant=${'primary'}
+          .size=${'large'}
+          .icon=${'🔍'}
+          .loading=${loading}
           .disabled=${loading || !query.trim()}
-          aria-label="Search"
-        >
-          ${loading ? 'Searching...' : 'Search'}
-        </button>
+          .label=${loading ? 'Searching...' : 'Search'}
+          .loadingLabel=${'Searching...'}
+          .type=${'submit'}
+        ></app-button>
       </div>
     </form>
   `;

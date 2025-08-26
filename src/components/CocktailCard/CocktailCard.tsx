@@ -5,7 +5,8 @@
 
 import { component } from 'haunted';
 import { html } from 'lit-html';
-import { Cocktail } from '../../types/enums';
+import { Cocktail } from '../../types/index.js';
+import { LanguageService } from '../../utils/index.js';
 import { cocktailCardStyles } from './CocktailCard.styles';
 
 interface CocktailCardProps {
@@ -32,15 +33,15 @@ function CocktailCard({ cocktail, onAddToShoppingList }: CocktailCardProps) {
       </div>
       <div class="cocktail-content">
         <h3 class="cocktail-name">${cocktail.strDrink}</h3>
-        <p class="cocktail-instructions">${cocktail.strInstructions}</p>
-        <button 
-          class="add-button"
-          @click=${handleAddClick}
-          aria-label=${`Add ${cocktail.strDrink} ingredients to shopping list`}
-        >
-          <span class="plus-icon">+</span>
-          Add to Shopping List
-        </button>
+        <p class="cocktail-instructions">${LanguageService.getLocalizedInstructions(cocktail)}</p>
+        <app-button
+          .variant=${'success'}
+          .size=${'medium'}
+          .icon=${'+'}
+          .label=${'Add to Shopping List'}
+          .onClick=${handleAddClick}
+          .ariaLabel=${`Add ${cocktail.strDrink} ingredients to shopping list`}
+        ></app-button>
       </div>
     </div>
   `;

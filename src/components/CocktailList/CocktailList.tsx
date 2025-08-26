@@ -5,15 +5,32 @@
 
 import { component } from 'haunted';
 import { html } from 'lit-html';
-import { Cocktail } from '../../types/enums';
+import { Cocktail } from '../../types/index.js';
 import { cocktailListStyles } from './CocktailList.styles';
 
 interface CocktailListProps {
   cocktails: Cocktail[];
+  hasSearched: boolean;
   onAddToShoppingList: (cocktail: Cocktail) => void;
 }
 
-function CocktailList({ cocktails, onAddToShoppingList }: CocktailListProps) {
+function CocktailList({ cocktails, hasSearched, onAddToShoppingList }: CocktailListProps) {
+  // If no search has been performed yet, show welcome message
+  if (!hasSearched) {
+    return html`
+      <style>
+        ${cocktailListStyles}
+      </style>
+      <div class="CocktailList welcome">
+        <div class="welcome-message">
+          <h2>🍸 Welcome to Cocktail Assistant!</h2>
+          <p>Search for your favorite cocktails above to get started.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // If search was performed but no results found
   if (cocktails.length === 0) {
     return html`
       <style>

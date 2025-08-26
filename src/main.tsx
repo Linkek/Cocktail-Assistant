@@ -5,21 +5,28 @@
 
 import { component, useState } from 'haunted';
 import { html } from 'lit-html';
-import { Cocktail, Ingredient, ToastMessage, ToastType } from './types/enums';
+import { Cocktail, Ingredient, ToastMessage, ToastType, CocktailRecipe, ShoppingItem } from './types/index.js';
 import { CocktailService } from './services/CocktailService';
+import { PrintService } from './utils';
+import { config } from './config';
 import { mainStyles } from './main.styles';
 
 // Import components
 import './components/SearchInput/SearchInput';
 import './components/CocktailList/CocktailList';
 import './components/CocktailCard/CocktailCard';
+import './components/RecipeList/RecipeList';
+import './components/CocktailRecipe/CocktailRecipe';
 import './components/ShoppingList/ShoppingList';
 import './components/Toast/Toast';
+import './components/Button/Button';
 
 function App() {
   const [cocktails, setCocktails] = useState<Cocktail[]>([]);
-  const [shoppingList, setShoppingList] = useState<Ingredient[]>([]);
+  const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
+  const [cocktailRecipes, setCocktailRecipes] = useState<CocktailRecipe[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
 
   const showToast = (type: ToastType, message: string) => {
@@ -32,6 +39,7 @@ function App() {
 
   const handleSearch = async (query: string) => {
     setLoading(true);
+    setHasSearched(true);
     showToast(ToastType.SEARCHING, 'Searching...');
     
     try {
@@ -53,52 +61,77 @@ function App() {
   };
 
   const handleAddToShoppingList = (cocktail: Cocktail) => {
-    const newIngredients = CocktailService.extractIngredients(cocktail);
-    const updatedList = [...shoppingList, ...newIngredients];
-    const deduplicatedList = CocktailService.deduplicateIngredients(updatedList);
+    // Add to recipes
+    const newRecipe = CocktailService.createCocktailRecipe(cocktail);
+    const updatedRecipes = [...cocktailRecipes];
     
-    setShoppingList(deduplicatedList);
+    // Check if recipe already exists
+    const existingRecipeIndex = updatedRecipes.findIndex(recipe => recipe.id === newRecipe.id);
+    if (existingRecipeIndex === -1) {
+      updatedRecipes.push(newRecipe);
+      setCocktailRecipes(updatedRecipes);
+    }
+    
+    // Add to shopping list
+    const allIngredients = updatedRecipes.flatMap(recipe => recipe.ingredients);
+    const shoppingItems = CocktailService.convertToShoppingItems(allIngredients);
+    setShoppingList(shoppingItems);
+    
     showToast(ToastType.ADDED, `Ingredients for ${cocktail.strDrink} added to shopping list!`);
   };
 
   const handleRemoveIngredient = (ingredientName: string) => {
     const updatedList = shoppingList.filter(
-      ingredient => ingredient.name.toLowerCase() !== ingredientName.toLowerCase()
+      item => item.name.toLowerCase() !== ingredientName.toLowerCase()
     );
     setShoppingList(updatedList);
     showToast(ToastType.REMOVED, `${ingredientName} removed from shopping list.`);
+
+    // Check if any recipes are now broken (missing ingredients)
+    checkAndRemoveBrokenRecipes(updatedList);
+  };
+
+  const handleRemoveRecipe = (recipeId: string) => {
+    const updatedRecipes = cocktailRecipes.filter(recipe => recipe.id !== recipeId);
+    setCocktailRecipes(updatedRecipes);
+    
+    // Recalculate shopping list without the removed recipe
+    const allIngredients = updatedRecipes.flatMap(recipe => recipe.ingredients);
+    const shoppingItems = CocktailService.convertToShoppingItems(allIngredients);
+    setShoppingList(shoppingItems);
+    
+    const removedRecipe = cocktailRecipes.find(recipe => recipe.id === recipeId);
+    showToast(ToastType.REMOVED, `${removedRecipe?.name || 'Recipe'} removed!`);
+  };
+
+  const checkAndRemoveBrokenRecipes = (currentShoppingList: ShoppingItem[]) => {
+    const availableIngredients = currentShoppingList.map(item => item.name.toLowerCase());
+    const brokenRecipes: CocktailRecipe[] = [];
+    
+    cocktailRecipes.forEach(recipe => {
+      const hasAllIngredients = recipe.ingredients.every(ingredient => 
+        availableIngredients.includes(ingredient.name.toLowerCase())
+      );
+      
+      if (!hasAllIngredients) {
+        brokenRecipes.push(recipe);
+      }
+    });
+
+    if (brokenRecipes.length > 0) {
+      const updatedRecipes = cocktailRecipes.filter(recipe => 
+        !brokenRecipes.some(broken => broken.id === recipe.id)
+      );
+      setCocktailRecipes(updatedRecipes);
+      
+      brokenRecipes.forEach(recipe => {
+        showToast(ToastType.REMOVED, `${recipe.name} removed (missing ingredients)`);
+      });
+    }
   };
 
   const handlePrintShoppingList = () => {
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      const printContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Shopping List - Cocktail Assistant</title>
-        </head>
-        <body>
-          <h1>Cocktail Shopping List</h1>
-          <p>Generated on ${new Date().toLocaleDateString()}</p>
-          <ul>
-            ${shoppingList.map(ingredient => `
-              <li>
-                <span class="ingredient-name">${ingredient.name}</span>
-                ${ingredient.measure ? `<span class="ingredient-measure">(${ingredient.measure})</span>` : ''}
-              </li>
-            `).join('')}
-          </ul>
-          <p><em>Total items: ${shoppingList.length}</em></p>
-        </body>
-        </html>
-      `;
-      
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-    }
+    PrintService.printShoppingList(shoppingList, cocktailRecipes);
   };
 
   return html`
@@ -113,16 +146,23 @@ function App() {
         <div class="results-section">
           <cocktail-list 
             .cocktails=${cocktails}
+            .hasSearched=${hasSearched}
             .onAddToShoppingList=${handleAddToShoppingList}
           ></cocktail-list>
         </div>
         
         <div class="sidebar">
           <shopping-list 
-            .ingredients=${shoppingList}
-            .onRemoveIngredient=${handleRemoveIngredient}
-            .onPrint=${handlePrintShoppingList}
+          .ingredients=${shoppingList}
+          .onRemoveIngredient=${handleRemoveIngredient}
+          .onPrint=${handlePrintShoppingList}
           ></shopping-list>
+          ${config.showRecipeInstructions ? html`
+            <recipe-list 
+              .recipes=${cocktailRecipes}
+              .onRemoveRecipe=${handleRemoveRecipe}
+            ></recipe-list>
+          ` : ''}
         </div>
       </div>
       

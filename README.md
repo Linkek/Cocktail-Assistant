@@ -125,6 +125,114 @@ The app integrates with TheCocktailDB API:
 - **Optimized Images**: Lazy loading and smooth transitions
 - **Small Bundle**: Minimal dependencies for fast loading
 
+## ⚙️ Configuration
+
+The Cocktail Assistant includes a configuration system that allows you to customize the app's behavior. All configuration options are located in [`src/config.ts`](src/config.ts).
+
+### Configuration Options
+
+```typescript
+export const config: AppConfig = {
+  // Toggle recipe instructions display in sidebar
+  showRecipeInstructions: true,
+  
+  // Set preferred language for cocktail instructions
+  language: 'en',
+};
+```
+
+### Available Settings
+
+#### 🍹 **Recipe Instructions Display**
+
+- **Property**: `showRecipeInstructions`
+- **Type**: `boolean`
+- **Default**: `true`
+- **Description**: Controls whether cocktail recipe cards are shown in the sidebar. The shopping list is always visible.
+
+**Examples:**
+
+```typescript
+showRecipeInstructions: true,  // Show recipe cards with ingredients and instructions
+showRecipeInstructions: false, // Hide recipe cards, show only shopping list
+```
+
+#### 🌍 **Language Support**
+
+- **Property**: `language`
+- **Type**: `string`
+- **Default**: `'en'`
+- **Description**: Sets the preferred language for cocktail instructions. Falls back to English if the selected language isn't available for a specific cocktail.
+
+**Supported Languages:**
+
+- `'en'` - **English** (Default)
+- `'es'` - **Español** (Spanish)
+- `'de'` - **Deutsch** (German)
+- `'fr'` - **Français** (French)
+- `'it'` - **Italiano** (Italian)
+- `'zh-hans'` - **中文 (简体)** (Chinese Simplified)
+- `'zh-hant'` - **中文 (繁體)** (Chinese Traditional)
+
+**Examples:**
+
+```typescript
+language: 'es',      // Spanish instructions
+language: 'de',      // German instructions
+language: 'fr',      // French instructions
+```
+
+### How to Modify Configuration
+
+1. **Open the config file**: Navigate to [`src/config.ts`](src/config.ts)
+2. **Edit the values**: Change the properties to your preferred settings
+3. **Save the file**: The changes will take effect immediately in development mode
+4. **Restart if needed**: In some cases, you may need to restart the development server
+
+### Configuration Examples
+
+#### Minimal Setup (Shopping List Only)
+
+```typescript
+export const config: AppConfig = {
+  showRecipeInstructions: false,
+  language: 'en',
+};
+```
+
+#### Spanish Language with Recipes
+
+```typescript
+export const config: AppConfig = {
+  showRecipeInstructions: true,
+  language: 'es',
+};
+```
+
+#### German Language, Shopping List Only
+
+```typescript
+export const config: AppConfig = {
+  showRecipeInstructions: false,
+  language: 'de',
+};
+```
+
+### Features Affected by Configuration
+
+#### Recipe Instructions (`showRecipeInstructions`)
+
+- ✅ **Enabled**: Shows recipe cards in sidebar with ingredients and instructions
+- ❌ **Disabled**: Hides recipe section, shows only shopping list
+- 📱 **Always**: Shopping list remains visible in both modes
+
+#### Language Setting (`language`)
+
+- 🎯 **Instructions**: Cocktail mixing instructions display in selected language
+- 🛒 **Shopping List**: Always shows ingredient names in English (API limitation)
+- 🖨️ **Print Feature**: Printed recipes use the configured language
+- 🔄 **Fallback**: Automatically uses English if selected language unavailable
+
 ---
 
 **Author**: Linus Karlsson  

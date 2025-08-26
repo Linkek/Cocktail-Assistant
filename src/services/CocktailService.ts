@@ -3,7 +3,8 @@
  * Author: Linus Karlsson
  */
 
-import { CocktailSearchResponse, Cocktail, Ingredient } from '../types/enums';
+import { CocktailSearchResponse, Cocktail, Ingredient, ShoppingItem, CocktailRecipe } from '../types/index.js';
+import { LanguageService } from '../utils/index.js';
 
 const API_BASE_URL = 'https://www.thecocktaildb.com/api/json/v1/1';
 
@@ -53,5 +54,28 @@ export class CocktailService {
     });
     
     return Array.from(uniqueIngredients.values());
+  }
+
+  static createCocktailRecipe(cocktail: Cocktail): CocktailRecipe {
+    return {
+      id: cocktail.idDrink,
+      name: cocktail.strDrink,
+      instructions: LanguageService.getLocalizedInstructions(cocktail),
+      ingredients: this.extractIngredients(cocktail)
+    };
+  }
+
+  static convertToShoppingItems(ingredients: Ingredient[]): ShoppingItem[] {
+    const itemMap = new Map<string, number>();
+    
+    ingredients.forEach(ingredient => {
+      const key = ingredient.name.toLowerCase();
+      itemMap.set(key, 1); // Always 1 bottle/item regardless of measure
+    });
+    
+    return Array.from(itemMap.entries()).map(([name, quantity]) => ({
+      name: ingredients.find(ing => ing.name.toLowerCase() === name)?.name || name,
+      quantity
+    }));
   }
 }
