@@ -23,7 +23,7 @@ export class CocktailService {
       throw error;
     }
   }
-
+  
   static extractIngredients(cocktail: Cocktail): Ingredient[] {
     const ingredients: Ingredient[] = [];
     
